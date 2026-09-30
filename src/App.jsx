@@ -3,6 +3,9 @@ import SearchBar from "./components/SearchBar";
 import MovieCard from "./components/MovieCard";
 import useDebounce from "./hooks/useDebounce";
 import useLocalStorage from "./hooks/useLocalStorage";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import MovieCardSkeleton from "./components/MovieCardSkeleton";
 
 const API_KEY = "fad55766";
 
@@ -27,7 +30,7 @@ function App() {
     }
     setLoading(true);
     setError(null);
-    fetch(`http://www.omdbapi.com/?apikey=${API_KEY}&s=${debouncedQuery}`)
+    fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${debouncedQuery}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
@@ -66,8 +69,11 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen w-full font-sans text-neutral-100 bg-linear-to-br from-red-950 via-neutral-900 to-black">
-    <div className="max-w-[1180px] mx-auto px-6 py-12">
+    <div className="min-h-screen w-full flex flex-col font-sans text-neutral-100 bg-linear-to-br from-red-950 via-neutral-900 to-black">
+
+      <Navbar />
+
+    <div className="max-w-[1180px] w-full mx-auto px-6 py-12 flex-1">
       <SearchBar
         value={query}
         onChange={(event) => setQuery(event.target.value)}
@@ -87,7 +93,7 @@ function App() {
         </button>
       </div>
       {tab === "favorites" ? (
-        <div className="grid grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">  
           {favorites.map((movie) => (
             <MovieCard
               movie={movie}
@@ -98,11 +104,15 @@ function App() {
           ))}
         </div>
       ) : loading ? (
-        <p className="text-center text-white/75 text-lg mt-8">Loading...</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+  {Array.from({ length: 5 }).map((_, index) => (
+    <MovieCardSkeleton key={index} />
+  ))}
+</div>
       ) : error ? (
         <p className="text-center text-white/75 text-lg mt-8">{error}</p>
       ) : (
-        <div className="grid grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {movies.map((movie) => (
             <MovieCard
               key={movie.imdbID}
@@ -116,6 +126,7 @@ function App() {
         </div>
       )}
     </div>
+    <Footer />
     </div>
   );
 }
